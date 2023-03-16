@@ -20,9 +20,6 @@ async function fetchData(urlApi) {
 //Get Movies Preview
 async function getTrendingMoviesPreview(urlApi) {
   try {
-    const trendingPreviewMoviesContainer = document.querySelector(
-      "#trendingPreview .trendingPreview-movieList"
-    );
     const res = await fetchData(urlApi);
     const movies = res.results;
 
@@ -39,7 +36,7 @@ async function getTrendingMoviesPreview(urlApi) {
       );
 
       movieContainer.appendChild(movieImg);
-      trendingPreviewMoviesContainer.appendChild(movieContainer);
+      trendingMoviesPreviewList.appendChild(movieContainer);
     });
   } catch (error) {
     console.log(error);
@@ -49,9 +46,6 @@ async function getTrendingMoviesPreview(urlApi) {
 //Get Categories Preview
 async function getCategoriesPreview(urlApi) {
   try {
-    const PreviewCategoriesContainer = document.querySelector(
-      "#categoriesPreview .categoriesPreview-list"
-    );
     const res = await fetchData(urlApi);
     const categories = res.genres;
 
@@ -66,7 +60,7 @@ async function getCategoriesPreview(urlApi) {
 
       categoryTitle.appendChild(categoryTitleText);
       categoryContainer.appendChild(categoryTitle);
-      PreviewCategoriesContainer.appendChild(categoryContainer);
+      categoriesPreviewList.appendChild(categoryContainer);
     });
   } catch (error) {
     console.log(error);
