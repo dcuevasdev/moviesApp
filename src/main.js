@@ -23,6 +23,8 @@ async function getTrendingMoviesPreview(urlApi) {
     const res = await fetchData(urlApi);
     const movies = res.results;
 
+    trendingMoviesPreviewList.innerHTML = "";
+
     movies.forEach((movie) => {
       const movieContainer = document.createElement("div");
       movieContainer.classList.add("movie-container");
@@ -48,6 +50,8 @@ async function getCategoriesPreview(urlApi) {
   try {
     const res = await fetchData(urlApi);
     const categories = res.genres;
+
+    categoriesPreviewList.innerHTML = "";
 
     categories.forEach((category) => {
       const categoryContainer = document.createElement("div");
