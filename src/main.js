@@ -10,10 +10,11 @@ const api = axios.create({
 
 const API_TRENDING_PREVIEW = `trending/movie/day`;
 const API_CATEGORIES = `genre/movie/list`;
+const API_GENDER_MOVIES = `discover/movie`;
 
 //fetchData
-async function fetchData(urlApi) {
-  const { data } = await api(urlApi);
+async function fetchData(urlApi, params) {
+  const { data } = await api(urlApi, params);
   return data;
 }
 
@@ -60,11 +61,46 @@ async function getCategoriesPreview(urlApi) {
       const categoryTitle = document.createElement("h3");
       categoryTitle.classList.add("category-title");
       categoryTitle.setAttribute("id", `id${category.id}`);
+      categoryTitle.addEventListener("click", () => {
+        location.hash = `#category=${category.id}-${category.name}`;
+      });
       const categoryTitleText = document.createTextNode(category.name);
 
       categoryTitle.appendChild(categoryTitleText);
       categoryContainer.appendChild(categoryTitle);
       categoriesPreviewList.appendChild(categoryContainer);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+//Get movies by category
+async function getMoviesByCategory(urlApi, id) {
+  try {
+    const res = await fetchData(urlApi, {
+      params: {
+        with_genres: id,
+      },
+    });
+    const movies = res.results;
+
+    genericSection.innerHTML = "";
+
+    movies.forEach((movie) => {
+      const movieContainer = document.createElement("div");
+      movieContainer.classList.add("movie-container");
+
+      const movieImg = document.createElement("img");
+      movieImg.classList.add("movie-img");
+      movieImg.setAttribute("alt", movie.title);
+      movieImg.setAttribute(
+        "src",
+        `https://image.tmdb.org/t/p/w300${movie.poster_path}`
+      );
+
+      movieContainer.appendChild(movieImg);
+      genericSection.appendChild(movieContainer);
     });
   } catch (error) {
     console.log(error);
