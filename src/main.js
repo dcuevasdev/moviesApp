@@ -12,6 +12,49 @@ const API_TRENDING_PREVIEW = `trending/movie/day`;
 const API_CATEGORIES = `genre/movie/list`;
 const API_GENDER_MOVIES = `discover/movie`;
 
+//Helpers
+function createMovie(movies, container) {
+  container.innerHTML = "";
+
+  movies.forEach((movie) => {
+    const movieContainer = document.createElement("div");
+    movieContainer.classList.add("movie-container");
+
+    const movieImg = document.createElement("img");
+    movieImg.classList.add("movie-img");
+    movieImg.setAttribute("alt", movie.title);
+    movieImg.setAttribute(
+      "src",
+      `https://image.tmdb.org/t/p/w300${movie.poster_path}`
+    );
+
+    movieContainer.appendChild(movieImg);
+    container.appendChild(movieContainer);
+  });
+}
+
+function createCategories(categories, container) {
+  container.innerHTML = "";
+
+  categories.forEach((category) => {
+    const categoryContainer = document.createElement("div");
+    categoryContainer.classList.add("category-container");
+
+    const categoryTitle = document.createElement("h3");
+    categoryTitle.classList.add("category-title");
+    categoryTitle.setAttribute("id", `id${category.id}`);
+    categoryTitle.addEventListener("click", () => {
+      location.hash = `#category=${category.id}-${category.name}`;
+    });
+    const categoryTitleText = document.createTextNode(category.name);
+
+    categoryTitle.appendChild(categoryTitleText);
+    categoryContainer.appendChild(categoryTitle);
+    categoriesPreviewList.appendChild(categoryContainer);
+  });
+}
+
+//Calls to API
 //fetchData
 async function fetchData(urlApi, params) {
   const { data } = await api(urlApi, params);
@@ -24,23 +67,7 @@ async function getTrendingMoviesPreview(urlApi) {
     const res = await fetchData(urlApi);
     const movies = res.results;
 
-    trendingMoviesPreviewList.innerHTML = "";
-
-    movies.forEach((movie) => {
-      const movieContainer = document.createElement("div");
-      movieContainer.classList.add("movie-container");
-
-      const movieImg = document.createElement("img");
-      movieImg.classList.add("movie-img");
-      movieImg.setAttribute("alt", movie.title);
-      movieImg.setAttribute(
-        "src",
-        `https://image.tmdb.org/t/p/w300${movie.poster_path}`
-      );
-
-      movieContainer.appendChild(movieImg);
-      trendingMoviesPreviewList.appendChild(movieContainer);
-    });
+    createMovie(movies, trendingMoviesPreviewList);
   } catch (error) {
     console.log(error);
   }
@@ -52,24 +79,7 @@ async function getCategoriesPreview(urlApi) {
     const res = await fetchData(urlApi);
     const categories = res.genres;
 
-    categoriesPreviewList.innerHTML = "";
-
-    categories.forEach((category) => {
-      const categoryContainer = document.createElement("div");
-      categoryContainer.classList.add("category-container");
-
-      const categoryTitle = document.createElement("h3");
-      categoryTitle.classList.add("category-title");
-      categoryTitle.setAttribute("id", `id${category.id}`);
-      categoryTitle.addEventListener("click", () => {
-        location.hash = `#category=${category.id}-${category.name}`;
-      });
-      const categoryTitleText = document.createTextNode(category.name);
-
-      categoryTitle.appendChild(categoryTitleText);
-      categoryContainer.appendChild(categoryTitle);
-      categoriesPreviewList.appendChild(categoryContainer);
-    });
+    createCategories(categories, categoriesPreviewList);
   } catch (error) {
     console.log(error);
   }
@@ -85,23 +95,7 @@ async function getMoviesByCategory(urlApi, id) {
     });
     const movies = res.results;
 
-    genericSection.innerHTML = "";
-
-    movies.forEach((movie) => {
-      const movieContainer = document.createElement("div");
-      movieContainer.classList.add("movie-container");
-
-      const movieImg = document.createElement("img");
-      movieImg.classList.add("movie-img");
-      movieImg.setAttribute("alt", movie.title);
-      movieImg.setAttribute(
-        "src",
-        `https://image.tmdb.org/t/p/w300${movie.poster_path}`
-      );
-
-      movieContainer.appendChild(movieImg);
-      genericSection.appendChild(movieContainer);
-    });
+    createMovie(movies, genericSection);
   } catch (error) {
     console.log(error);
   }

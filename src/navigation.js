@@ -23,6 +23,9 @@ function navigator() {
     : location.hash.startsWith("#category=")
     ? categoriesPage()
     : homePage();
+
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
 }
 
 function homePage() {
