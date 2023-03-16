@@ -46,8 +46,6 @@ async function getTrendingMoviesPreview(urlApi) {
   }
 }
 
-getTrendingMoviesPreview(API_TRENDING_PREVIEW);
-
 //Get Categories Preview
 async function getCategoriesPreview(urlApi) {
   try {
@@ -74,5 +72,3 @@ async function getCategoriesPreview(urlApi) {
     console.log(error);
   }
 }
-
-getCategoriesPreview(API_CATEGORIES);
