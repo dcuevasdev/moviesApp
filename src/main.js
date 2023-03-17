@@ -11,6 +11,7 @@ const api = axios.create({
 const API_TRENDING_PREVIEW = `trending/movie/day`;
 const API_CATEGORIES = `genre/movie/list`;
 const API_GENDER_MOVIES = `discover/movie`;
+const API_SEARCH_QUERY = `search/movie`;
 
 //Helpers
 function createMovie(movies, container) {
@@ -91,6 +92,22 @@ async function getMoviesByCategory(urlApi, id) {
     const res = await fetchData(urlApi, {
       params: {
         with_genres: id,
+      },
+    });
+    const movies = res.results;
+
+    createMovie(movies, genericSection);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+//Get movies by Query
+async function getMoviesBySearch(urlApi, query) {
+  try {
+    const res = await fetchData(urlApi, {
+      params: {
+        query,
       },
     });
     const movies = res.results;
