@@ -117,3 +117,15 @@ async function getMoviesBySearch(urlApi, query) {
     console.log(error);
   }
 }
+
+//Get Trending Movies Preview
+async function getTrendingMovies(urlApi) {
+  try {
+    const res = await fetchData(urlApi);
+    const movies = res.results;
+
+    createMovie(movies, genericSection);
+  } catch (error) {
+    console.log(error);
+  }
+}
