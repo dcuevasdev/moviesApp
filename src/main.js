@@ -13,13 +13,16 @@ const API_CATEGORIES = `genre/movie/list`;
 const API_GENDER_MOVIES = `discover/movie`;
 const API_SEARCH_QUERY = `search/movie`;
 
-//Helpers
+//Utils
 function createMovie(movies, container) {
   container.innerHTML = "";
 
   movies.forEach((movie) => {
     const movieContainer = document.createElement("div");
     movieContainer.classList.add("movie-container");
+    movieContainer.addEventListener("click", () => {
+      location.hash = `#movie=${movie.id}`;
+    });
 
     const movieImg = document.createElement("img");
     movieImg.classList.add("movie-img");
@@ -51,7 +54,7 @@ function createCategories(categories, container) {
 
     categoryTitle.appendChild(categoryTitleText);
     categoryContainer.appendChild(categoryTitle);
-    categoriesPreviewList.appendChild(categoryContainer);
+    container.appendChild(categoryContainer);
   });
 }
 
@@ -125,6 +128,29 @@ async function getTrendingMovies(urlApi) {
     const movies = res.results;
 
     createMovie(movies, genericSection);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+//Get Trending Movies by Id
+async function getMovieById(movieId) {
+  try {
+    const movie = await fetchData(`movie/${movieId}`);
+
+    const movieImgUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+    headerSection.style.background = `linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.35) 19.27%,
+      rgba(0, 0, 0, 0) 29.17%
+    ),
+    url("${movieImgUrl}")`;
+
+    movieDetailTitle.textContent = movie.title;
+    movieDetailDescription.textContent = movie.overview;
+    movieDetailScore.textContent = movie.vote_average;
+
+    createCategories(movie.genres, movieDetailCategoriesList);
   } catch (error) {
     console.log(error);
   }
