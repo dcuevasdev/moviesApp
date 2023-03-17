@@ -151,7 +151,17 @@ async function getMovieById(movieId) {
     movieDetailScore.textContent = movie.vote_average;
 
     createCategories(movie.genres, movieDetailCategoriesList);
+
+    getRelatedMoviesId(movieId);
   } catch (error) {
     console.log(error);
   }
+}
+
+//Get movies recommendation
+async function getRelatedMoviesId(movieId) {
+  const res = await fetchData(`movie/${movieId}/recommendations`);
+  const relatedMovies = res.results;
+
+  createMovie(relatedMovies, relatedMoviesContainer);
 }
