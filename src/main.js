@@ -23,8 +23,14 @@ const lazyLoader = new IntersectionObserver((entries) => {
   });
 });
 
-function createMovie(movies, container, lazyLoad = false) {
-  container.innerHTML = "";
+function createMovie(
+  movies,
+  container,
+  { lazyLoad = false, clean = true } = {}
+) {
+  if (clean) {
+    container.innerHTML = "";
+  }
 
   movies.forEach((movie) => {
     const movieContainer = document.createElement("div");
@@ -87,7 +93,7 @@ async function getTrendingMoviesPreview(urlApi) {
     const res = await fetchData(urlApi);
     const movies = res.results;
 
-    createMovie(movies, trendingMoviesPreviewList, true);
+    createMovie(movies, trendingMoviesPreviewList, { lazyLoad: true });
   } catch (error) {
     console.log(error);
   }
@@ -115,7 +121,7 @@ async function getMoviesByCategory(urlApi, id) {
     });
     const movies = res.results;
 
-    createMovie(movies, genericSection, true);
+    createMovie(movies, genericSection, { lazyLoad: true });
   } catch (error) {
     console.log(error);
   }
@@ -143,7 +149,35 @@ async function getTrendingMovies(urlApi) {
     const res = await fetchData(urlApi);
     const movies = res.results;
 
-    createMovie(movies, genericSection);
+    createMovie(movies, genericSection, { lazyLoad: true, clean: true });
+
+    const btnLoadMore = document.createElement("button");
+    btnLoadMore.innerText = "cargar mas";
+    btnLoadMore.addEventListener("click", getPaginatedTrendingMovies);
+    genericSection.appendChild(btnLoadMore);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+let page = 1;
+
+async function getPaginatedTrendingMovies() {
+  try {
+    page++;
+    const res = await fetchData(API_TRENDING_PREVIEW, {
+      params: {
+        page,
+      },
+    });
+    const movies = res.results;
+
+    createMovie(movies, genericSection, { lazyLoad: true, clean: false });
+
+    const btnLoadMore = document.createElement("button");
+    btnLoadMore.innerText = "cargar mas";
+    btnLoadMore.addEventListener("click", getPaginatedTrendingMovies);
+    genericSection.appendChild(btnLoadMore);
   } catch (error) {
     console.log(error);
   }
