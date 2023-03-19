@@ -14,7 +14,16 @@ const API_GENDER_MOVIES = `discover/movie`;
 const API_SEARCH_QUERY = `search/movie`;
 
 //Utils
-function createMovie(movies, container) {
+const lazyLoader = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      const url = entry.target.getAttribute("data-img");
+      entry.target.setAttribute("src", url);
+    }
+  });
+});
+
+function createMovie(movies, container, lazyLoad = false) {
   container.innerHTML = "";
 
   movies.forEach((movie) => {
@@ -28,9 +37,13 @@ function createMovie(movies, container) {
     movieImg.classList.add("movie-img");
     movieImg.setAttribute("alt", movie.title);
     movieImg.setAttribute(
-      "src",
+      lazyLoad ? "data-img" : "src",
       `https://image.tmdb.org/t/p/w300${movie.poster_path}`
     );
+
+    if (lazyLoad) {
+      lazyLoader.observe(movieImg);
+    }
 
     movieContainer.appendChild(movieImg);
     container.appendChild(movieContainer);
@@ -71,7 +84,7 @@ async function getTrendingMoviesPreview(urlApi) {
     const res = await fetchData(urlApi);
     const movies = res.results;
 
-    createMovie(movies, trendingMoviesPreviewList);
+    createMovie(movies, trendingMoviesPreviewList, true);
   } catch (error) {
     console.log(error);
   }
