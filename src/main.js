@@ -150,34 +150,33 @@ async function getTrendingMovies(urlApi) {
     const movies = res.results;
 
     createMovie(movies, genericSection, { lazyLoad: true, clean: true });
-
-    const btnLoadMore = document.createElement("button");
-    btnLoadMore.innerText = "cargar mas";
-    btnLoadMore.addEventListener("click", getPaginatedTrendingMovies);
-    genericSection.appendChild(btnLoadMore);
   } catch (error) {
     console.log(error);
   }
 }
 
-let page = 1;
-
 async function getPaginatedTrendingMovies() {
   try {
-    page++;
-    const res = await fetchData(API_TRENDING_PREVIEW, {
-      params: {
-        page,
-      },
-    });
-    const movies = res.results;
+    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
 
-    createMovie(movies, genericSection, { lazyLoad: true, clean: false });
+    const scrollIsBottom = scrollTop + clientHeight >= scrollHeight - 15;
 
-    const btnLoadMore = document.createElement("button");
-    btnLoadMore.innerText = "cargar mas";
-    btnLoadMore.addEventListener("click", getPaginatedTrendingMovies);
-    genericSection.appendChild(btnLoadMore);
+    if (scrollIsBottom) {
+      page++;
+      const res = await fetchData(API_TRENDING_PREVIEW, {
+        params: {
+          page,
+        },
+      });
+      const movies = res.results;
+
+      createMovie(movies, genericSection, { lazyLoad: true, clean: false });
+    }
+
+    // const btnLoadMore = document.createElement("button");
+    // btnLoadMore.innerText = "cargar mas";
+    // btnLoadMore.addEventListener("click", getPaginatedTrendingMovies);
+    // genericSection.appendChild(btnLoadMore);
   } catch (error) {
     console.log(error);
   }
