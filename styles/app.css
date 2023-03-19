@@ -115,6 +115,7 @@ footer {
 }
 
 .movie-img {
+  min-height: 175px;
   border-radius: 8px;
 }
 
