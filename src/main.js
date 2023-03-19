@@ -120,11 +120,34 @@ async function getMoviesByCategory(urlApi, id) {
       },
     });
     const movies = res.results;
+    maxPage = res.total_pages;
 
     createMovie(movies, genericSection, { lazyLoad: true });
   } catch (error) {
     console.log(error);
   }
+}
+
+function getPaginateMoviesByCategory(id) {
+  return async function () {
+    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+    const scrollIsBottom = scrollTop + clientHeight >= scrollHeight - 15;
+    const pageIsNotMax = page < maxPage;
+
+    if (scrollIsBottom && pageIsNotMax) {
+      page++;
+      const res = await api(API_GENDER_MOVIES, {
+        params: {
+          with_genres: id,
+          page,
+        },
+      });
+      const movies = res.data.results;
+
+      createMovie(movies, genericSection, { lazyLoad: true, clean: false });
+    }
+  };
 }
 
 //Get movies by Query
@@ -136,6 +159,7 @@ async function getMoviesBySearch(urlApi, query) {
       },
     });
     const movies = res.results;
+    maxPage = res.total_pages;
 
     createMovie(movies, genericSection);
   } catch (error) {
@@ -143,11 +167,34 @@ async function getMoviesBySearch(urlApi, query) {
   }
 }
 
+function getPaginateMoviesBySearch(query) {
+  return async function () {
+    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+    const scrollIsBottom = scrollTop + clientHeight >= scrollHeight - 15;
+    const pageIsNotMax = page < maxPage;
+
+    if (scrollIsBottom && pageIsNotMax) {
+      page++;
+      const res = await api(API_SEARCH_QUERY, {
+        params: {
+          query,
+          page,
+        },
+      });
+      const movies = res.data.results;
+
+      createMovie(movies, genericSection, { lazyLoad: true, clean: false });
+    }
+  };
+}
+
 //Get Trending Movies Preview
 async function getTrendingMovies(urlApi) {
   try {
     const res = await fetchData(urlApi);
     const movies = res.results;
+    maxPage = res.total_pages;
 
     createMovie(movies, genericSection, { lazyLoad: true, clean: true });
   } catch (error) {
@@ -160,8 +207,9 @@ async function getPaginatedTrendingMovies() {
     const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
 
     const scrollIsBottom = scrollTop + clientHeight >= scrollHeight - 15;
+    const pageIsNotMax = page < maxPage;
 
-    if (scrollIsBottom) {
+    if (scrollIsBottom && pageIsNotMax) {
       page++;
       const res = await fetchData(API_TRENDING_PREVIEW, {
         params: {
@@ -172,11 +220,6 @@ async function getPaginatedTrendingMovies() {
 
       createMovie(movies, genericSection, { lazyLoad: true, clean: false });
     }
-
-    // const btnLoadMore = document.createElement("button");
-    // btnLoadMore.innerText = "cargar mas";
-    // btnLoadMore.addEventListener("click", getPaginatedTrendingMovies);
-    // genericSection.appendChild(btnLoadMore);
   } catch (error) {
     console.log(error);
   }
